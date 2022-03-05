@@ -1,4 +1,8 @@
 //KARIUKI JAMES MWAURA - CIT-221-059/2018
+//HALIMA YUSUF GALGALO - CIT-221-058/2018
+//MURIITHI CHARLES MAINA -CIT-221-053/2018
+//ROBERT MUNGAI MWANGI - CIT-221-039/2018
+//JUMA MICHELLE NANJALA - CIT-221-018/2018
 #include <iostream>
 #include <queue>
 #include <fstream>
@@ -13,8 +17,9 @@ int customers=15, iat=0, serviceTime=0, startTime=0, inQueue=0;
 int idleHours=0, idleMinutes=0;
 int RN_arrival[] = {82, 91, 12, 77, 90, 75, 33, 61, 19, 58, 41, 54, 52, 16, 86};
 int RN_service[] = {93, 59, 76, 62, 40, 41, 51, 91, 93, 38, 92, 22, 9, 7, 65};
-// std::ofstream outfile("testing.txt",std::ios::out);
-// outfile<<"\n Customer\t RN(arrivals)\t IAT\t Arrival time\t RN(service)\t \t Service.T\t Start.T\t End.T\t In Queue\t Idle.T\t Delay\n";
+std::ofstream outfile("output.txt",std::ios::out);
+outfile<<"\nC\tIAT\tAT\tST\tSB\tSE\tin_Queue\t\tIT\t Delay\n";
+
 struct time { //HH:MM time structure
     int hour;
     int mins;
@@ -32,7 +37,7 @@ serviceEnd.hour = 1, serviceEnd.mins = 0;
 std::queue<time> q; //declare a queue that stores end time values
 q.push(serviceEnd);
 
-std::cout<<"C\t"<<"IAT\t"<<"AT\t\t"<<"ST\t"<<"SB\t\t"<<"SE\t\t"<<"inQueue\t"<<"IT\t"<<"Delay\n";
+
 
 for (int i = 0; i<customers; ++i)
 {
@@ -119,40 +124,37 @@ for (int i = 0; i<customers; ++i)
     }
     delay.mins = serviceBegin.mins - arrivalTime.mins; 
 
-    std::cout<<(i+1)<<"\t"<<iat<<"\t";
+    outfile<<(i+1)<<"\t"<<iat<<"\t";
     if(arrivalTime.mins<10){
-        std::cout<<arrivalTime.hour<<":0"<<arrivalTime.mins<<"\t";
+        outfile<<arrivalTime.hour<<":0"<<arrivalTime.mins<<"\t";
     }else{
-        std::cout<<arrivalTime.hour<<":"<<arrivalTime.mins<<"\t";
+        outfile<<arrivalTime.hour<<":"<<arrivalTime.mins<<"\t";
     }
-    std::cout<<serviceTime<<"\t";
+    outfile<<serviceTime<<"\t";
     if(serviceBegin.mins<10){
-        std::cout<<serviceBegin.hour<<":0"<<serviceBegin.mins<<"\t";
+        outfile<<serviceBegin.hour<<":0"<<serviceBegin.mins<<"\t";
     }else{
-        std::cout<<serviceBegin.hour<<":"<<serviceBegin.mins<<"\t";
+        outfile<<serviceBegin.hour<<":"<<serviceBegin.mins<<"\t";
     }
     if(serviceEnd.mins<10){
-        std::cout<<serviceEnd.hour<<":0"<<serviceEnd.mins<<"\t";
+        outfile<<serviceEnd.hour<<":0"<<serviceEnd.mins<<"\t";
     }else{
-        std::cout<<serviceEnd.hour<<":"<<serviceEnd.mins<<"\t";
+        outfile<<serviceEnd.hour<<":"<<serviceEnd.mins<<"\t";
     }
-    //////////////////////QUEUE//////////////////////
-    std::cout<<inQueue<<"\t\t";
-    ////////////////////////////////////////////////
+    outfile<<inQueue<<"\t\t";
     if(idleTime.hour > 0){
-        std::cout<<idleTime.hour<<":"<<idleTime.mins<<"\t";
+        outfile<<idleTime.hour<<":"<<idleTime.mins<<"\t";
     }else{
-        std::cout<<idleTime.mins<<"\t";
+        outfile<<idleTime.mins<<"\t";
     }
     if(delay.hour > 0){
-        std::cout<<delay.hour<<":"<<delay.mins<<"\n";
+        outfile<<delay.hour<<":"<<delay.mins<<"\n";
     }else{
-        std::cout<<delay.mins<<"\n";
+        outfile<<delay.mins<<"\n";
     }
 
 }
 
-std::cout<<"\nQueue\n";
-std::cout<<q.size();
+std::cout<<"The results are save on a text file called (output.txt)";
 
 }
