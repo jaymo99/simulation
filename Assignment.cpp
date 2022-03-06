@@ -18,7 +18,7 @@ int idleHours=0, idleMinutes=0;
 int RN_arrival[] = {82, 91, 12, 77, 90, 75, 33, 61, 19, 58, 41, 54, 52, 16, 86};
 int RN_service[] = {93, 59, 76, 62, 40, 41, 51, 91, 93, 38, 92, 22, 9, 7, 65};
 std::ofstream outfile("output.txt",std::ios::out);
-outfile<<"\nC\tIAT\tAT\tST\tSB\tSE\tin_Queue\t\tIT\t Delay\n";
+outfile<<"\nC\tRN\tIAT\tAT\tRN\tST\tStart\tEnd\tin_Queue\t\tIT\tDelay\n";
 
 struct time { //HH:MM time structure
     int hour;
@@ -124,13 +124,13 @@ for (int i = 0; i<customers; ++i)
     }
     delay.mins = serviceBegin.mins - arrivalTime.mins; 
 
-    outfile<<(i+1)<<"\t"<<iat<<"\t";
+    outfile<<(i+1)<<"\t"<<RN_arrival[i]<<"\t"<<iat<<"\t";
     if(arrivalTime.mins<10){
         outfile<<arrivalTime.hour<<":0"<<arrivalTime.mins<<"\t";
     }else{
         outfile<<arrivalTime.hour<<":"<<arrivalTime.mins<<"\t";
     }
-    outfile<<serviceTime<<"\t";
+    outfile<<RN_service[i]<<"\t"<<serviceTime<<"\t";
     if(serviceBegin.mins<10){
         outfile<<serviceBegin.hour<<":0"<<serviceBegin.mins<<"\t";
     }else{
@@ -154,7 +154,9 @@ for (int i = 0; i<customers; ++i)
     }
 
 }
-
-std::cout<<"The results are save on a text file called (output.txt)";
+outfile<<"\nThe server utilization rate = ";
+outfile<<"\nThe average delay in the Queue = ";
+outfile<<"\nThe average No. of customers queueing per hour = ";
+std::cout<<"\nThe results are save on a text file called (output.txt)\nNOTE: table displays correctly on notepad";
 
 }
