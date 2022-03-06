@@ -13,10 +13,11 @@ int main()
 { 
 // Single server queue:
 
-int customers=15, iat=0, serviceTime=0, startTime=0, inQueue=0;
-int idleHours=0, idleMinutes=0;
+int customers=15, iat=0, serviceTime=0, inQueue=0;
+double totalIdleTime=0, totalSimulationTime=0;
 int RN_arrival[] = {82, 91, 12, 77, 90, 75, 33, 61, 19, 58, 41, 54, 52, 16, 86};
 int RN_service[] = {93, 59, 76, 62, 40, 41, 51, 91, 93, 38, 92, 22, 9, 7, 65};
+double sur; //server utilization rate
 std::ofstream outfile("output.txt",std::ios::out);
 outfile<<"\nC\tRN\tIAT\tAT\tRN\tST\tStart\tEnd\tin_Queue\t\tIT\tDelay\n";
 
@@ -33,6 +34,9 @@ serviceBegin.hour = 1, serviceBegin.mins = 0;
 
 time serviceEnd;
 serviceEnd.hour = 1, serviceEnd.mins = 0;
+
+time startTime; //to calculate total simulation time
+time endTime; //to calculate total simulation time
 
 std::queue<time> q; //declare a queue that stores end time values
 q.push(serviceEnd);
@@ -102,15 +106,22 @@ for (int i = 0; i<customers; ++i)
         serviceBegin.mins = arrivalTime.mins;
     }
 
+    if(i==0){
+        startTime = serviceBegin; //store the very first start Time (to calculate tot simulation time)
+    }
+
     //Calculate idle time
-    time idleTime;
-    idleTime.hour = serviceBegin.hour - serviceEnd.hour;
-    idleTime.mins = serviceBegin.mins - serviceEnd.mins;
+    int a = (serviceBegin.hour*60) + serviceBegin.mins;
+    int b = (serviceEnd.hour*60) + serviceEnd.mins;
+    int idleTime = a-b;
+    totalIdleTime += idleTime; //cumulative result for total idle time
 
     //Generate End time
     int addedMins = serviceBegin.mins + (serviceTime%60);
     serviceEnd.hour = serviceBegin.hour + (addedMins/60);
     serviceEnd.mins =  addedMins % 60;
+
+    endTime = serviceEnd; // for calculating tot. simulation time
 
     //push to Queue
     q.push(serviceEnd);
@@ -141,12 +152,7 @@ for (int i = 0; i<customers; ++i)
     }else{
         outfile<<serviceEnd.hour<<":"<<serviceEnd.mins<<"\t";
     }
-    outfile<<inQueue<<"\t\t";
-    if(idleTime.hour > 0){
-        outfile<<idleTime.hour<<":"<<idleTime.mins<<"\t";
-    }else{
-        outfile<<idleTime.mins<<"\t";
-    }
+    outfile<<inQueue<<"\t\t"<<idleTime<<"\t";
     if(delay.hour > 0){
         outfile<<delay.hour<<":"<<delay.mins<<"\n";
     }else{
@@ -154,7 +160,15 @@ for (int i = 0; i<customers; ++i)
     }
 
 }
-outfile<<"\nThe server utilization rate = ";
+//calcluate total simulation time
+int a = ((endTime.hour * 60) + endTime.mins); //convert to minutes
+int b = ((startTime.hour * 60) + startTime.mins);
+totalSimulationTime = a-b;
+//calculate server utilization rate
+sur = ((totalSimulationTime - totalIdleTime)/totalSimulationTime);
+sur *=100; //multiply by 100 to get percentage
+
+outfile<<"\nThe server utilization rate = "<<round(sur)<<"%";
 outfile<<"\nThe average delay in the Queue = ";
 outfile<<"\nThe average No. of customers queueing per hour = ";
 std::cout<<"\nThe results are save on a text file called (output.txt)\nNOTE: table displays correctly on notepad";
