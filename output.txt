@@ -18,4 +18,4 @@ C	RN	IAT	AT	RN	ST	Start	End	in_Queue		IT	Delay
 
 The server utilization rate = 93%
 The average delay in the Queue = 7 minutes/customer (approx.)
-The average No. of customers queueing per hour = 
+The average No. of customers queueing per hour = 0.554 customers/hour (approx.)

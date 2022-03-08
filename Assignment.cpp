@@ -18,7 +18,7 @@ double customers=15, totalIdleTime=0, totalSimulationTime=0, delayTime=0, totalD
 int RN_arrival[] = {82, 91, 12, 77, 90, 75, 33, 61, 19, 58, 41, 54, 52, 16, 86};
 int RN_service[] = {93, 59, 76, 62, 40, 41, 51, 91, 93, 38, 92, 22, 9, 7, 65};
 double sur; //server utilization rate
-double averageDelay;
+double averageDelay, averageCustomersInQueue, totalCustomersInQueue=0;
 std::ofstream outfile("output.txt",std::ios::out);
 outfile<<"\nC\tRN\tIAT\tAT\tRN\tST\tStart\tEnd\tin_Queue\t\tIT\tDelay\n";
 
@@ -76,6 +76,7 @@ for (int i = 0; i<customers; ++i)
     }
 
     inQueue = q.size();
+    totalCustomersInQueue += inQueue;
 
     //Generate service time
     x = RN_service[i]; 
@@ -108,7 +109,7 @@ for (int i = 0; i<customers; ++i)
     }
 
     if(i==0){
-        startTime = serviceBegin; //store the very first start Time (to calculate tot simulation time)
+        startTime = serviceBegin; //store the very first start Time (to calculate total simulation time)
     }
 
     //Calculate idle time
@@ -161,10 +162,12 @@ sur = ((totalSimulationTime - totalIdleTime)/totalSimulationTime);
 sur *=100; //multiply by 100 to get percentage
 //calculate average delay in the Queue
 averageDelay = (totalDelayTime / customers);
+//calculate average no of customers queueing per hour
+averageCustomersInQueue = (totalCustomersInQueue / totalSimulationTime);
 
 outfile<<"\nThe server utilization rate = "<<round(sur)<<"%";
 outfile<<"\nThe average delay in the Queue = "<<round(averageDelay)<<" minutes/customer (approx.)";
-outfile<<"\nThe average No. of customers queueing per hour = ";
+outfile<<"\nThe average No. of customers queueing per hour = "<<std::setprecision(3)<<averageCustomersInQueue<<" customers/hour (approx.)";
 std::cout<<"\nThe results are save on a text file called (output.txt)\nNOTE: table displays correctly on notepad";
 
 }
