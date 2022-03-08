@@ -13,11 +13,12 @@ int main()
 { 
 // Single server queue:
 
-int customers=15, iat=0, serviceTime=0, inQueue=0;
-double totalIdleTime=0, totalSimulationTime=0;
+int iat=0, serviceTime=0, inQueue=0;
+double customers=15, totalIdleTime=0, totalSimulationTime=0, delayTime=0, totalDelayTime=0;
 int RN_arrival[] = {82, 91, 12, 77, 90, 75, 33, 61, 19, 58, 41, 54, 52, 16, 86};
 int RN_service[] = {93, 59, 76, 62, 40, 41, 51, 91, 93, 38, 92, 22, 9, 7, 65};
 double sur; //server utilization rate
+double averageDelay;
 std::ofstream outfile("output.txt",std::ios::out);
 outfile<<"\nC\tRN\tIAT\tAT\tRN\tST\tStart\tEnd\tin_Queue\t\tIT\tDelay\n";
 
@@ -127,13 +128,8 @@ for (int i = 0; i<customers; ++i)
     q.push(serviceEnd);
 
     //Calculate Delay
-    time delay;
-    delay.hour = serviceBegin.hour - arrivalTime.hour;
-    if(delay.hour>0 && serviceBegin.mins<arrivalTime.mins){
-        delay.hour = delay.hour - 1;
-        serviceBegin.mins += 60;
-    }
-    delay.mins = serviceBegin.mins - arrivalTime.mins; 
+    delayTime = ((serviceBegin.hour*60) + serviceBegin.mins) - ((arrivalTime.hour*60) + arrivalTime.mins);
+    totalDelayTime += delayTime;
 
     outfile<<(i+1)<<"\t"<<RN_arrival[i]<<"\t"<<iat<<"\t";
     if(arrivalTime.mins<10){
@@ -153,11 +149,7 @@ for (int i = 0; i<customers; ++i)
         outfile<<serviceEnd.hour<<":"<<serviceEnd.mins<<"\t";
     }
     outfile<<inQueue<<"\t\t"<<idleTime<<"\t";
-    if(delay.hour > 0){
-        outfile<<delay.hour<<":"<<delay.mins<<"\n";
-    }else{
-        outfile<<delay.mins<<"\n";
-    }
+    outfile<<delayTime<<"\n";
 
 }
 //calcluate total simulation time
@@ -167,9 +159,11 @@ totalSimulationTime = a-b;
 //calculate server utilization rate
 sur = ((totalSimulationTime - totalIdleTime)/totalSimulationTime);
 sur *=100; //multiply by 100 to get percentage
+//calculate average delay in the Queue
+averageDelay = (totalDelayTime / customers);
 
 outfile<<"\nThe server utilization rate = "<<round(sur)<<"%";
-outfile<<"\nThe average delay in the Queue = ";
+outfile<<"\nThe average delay in the Queue = "<<round(averageDelay)<<" minutes/customer (approx.)";
 outfile<<"\nThe average No. of customers queueing per hour = ";
 std::cout<<"\nThe results are save on a text file called (output.txt)\nNOTE: table displays correctly on notepad";
 
